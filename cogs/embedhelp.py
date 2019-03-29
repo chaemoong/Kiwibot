@@ -165,7 +165,7 @@ class Help:
                 embed = discord.Embed(
                     title='명령어를 찾을 수 없음!'
                 )
-                embed.add_field(name='{} 명령어를 찾을 수 없습니다!'.format(ctx), value='다시 한번 확인하신 후 사용해주시기 바랍니다!')
+                embed.add_field(name='{} 명령어를 찾을 수 없습니다!'.format(ctx.command.qualified_name), value='다시 한번 확인하신 후 사용해주시기 바랍니다!')
                 await self.bot.say(embed=embed)
 
 def check_folder():

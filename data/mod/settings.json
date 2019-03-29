@@ -1,0 +1,41 @@
+{
+    "442141853781983232" : {
+        "ban_cases" : true,
+        "ban_mention_spam" : false,
+        "cmute_cases" : true,
+        "delete_repeats" : false,
+        "hackban_cases" : true,
+        "kick_cases" : true,
+        "mod-log" : null,
+        "respect_hierarchy" : false,
+        "smute_cases" : false,
+        "softban_cases" : true,
+        "unban_cases" : true
+    },
+    "467097011011977236" : {
+        "ban_cases" : true,
+        "ban_mention_spam" : false,
+        "cmute_cases" : true,
+        "delete_repeats" : false,
+        "hackban_cases" : true,
+        "kick_cases" : true,
+        "mod-log" : "516118541884325888",
+        "respect_hierarchy" : true,
+        "smute_cases" : false,
+        "softban_cases" : true,
+        "unban_cases" : true
+    },
+    "531270140726083614" : {
+        "ban_cases" : true,
+        "ban_mention_spam" : false,
+        "cmute_cases" : true,
+        "delete_repeats" : false,
+        "hackban_cases" : true,
+        "kick_cases" : true,
+        "mod-log" : null,
+        "respect_hierarchy" : false,
+        "smute_cases" : false,
+        "softban_cases" : true,
+        "unban_cases" : true
+    }
+}

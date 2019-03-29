@@ -1,0 +1,24 @@
+{
+    "467097011011977236" : {
+        "ADMIN_ROLE" : "admin kiwi",
+        "MOD_ROLE" : "<@&494104577537212468>",
+        "PREFIXES" : []
+    },
+    "474179383750426654" : {
+        "ADMIN_ROLE" : "[ ADMIN ]",
+        "MOD_ROLE" : "[ CH1NO ]",
+        "PREFIXES" : []
+    },
+    "EMAIL" : null,
+    "OWNER" : "431085681847042048",
+    "PASSWORD" : null,
+    "PREFIXES" : [
+        "!!"
+    ],
+    "TOKEN" : "NTQ5MjI3MzQzNzgxMDM2MDMy.D3e18Q.gfIVW13B07PPIgwxOfjXw1aDMZo",
+    "default" : {
+        "ADMIN_ROLE" : "<@&494125085679157268>",
+        "MOD_ROLE" : "<@&494104577537212468>",
+        "PREFIXES" : []
+    }
+}

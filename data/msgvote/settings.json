@@ -1,0 +1,8 @@
+{
+    "bot" : true,
+    "channels_enabled" : [],
+    "dn_emoji" : "\ud83d\udc4e",
+    "duration" : 300,
+    "threshold" : 3,
+    "up_emoji" : "\ud83d\udc4d"
+}

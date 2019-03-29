@@ -1,0 +1,16 @@
+{
+    "455015978422763550" : {
+        "Channel" : "455233383577157642",
+        "embed" : true,
+        "toggleban" : true,
+        "togglechannel" : false,
+        "toggledelete" : false,
+        "toggleedit" : false,
+        "togglejoin" : false,
+        "toggleleave" : false,
+        "toggleroles" : false,
+        "toggleserver" : false,
+        "toggleuser" : false,
+        "togglevoice" : false
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "amount" : 5,
+    "embedAuthor" : false,
+    "embedColor" : "0xFFFFFF",
+    "embedFooter" : "This is your footer!",
+    "embedTitle" : "This is your title!",
+    "embedToggle" : true,
+    "helpMessage" : [],
+    "helpPrivate" : false
+}

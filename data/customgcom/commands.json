@@ -1,0 +1,8 @@
+{
+    "ALIASES" : {},
+    "COMMANDS" : {
+        "joy" : "joy\ub97c \ub20c\ub7ec x\ub97c \ud45c\ud558\uc2dc\uc624.",
+        "x" : "x\ub97c \ub20c\ub7ec joy\ub97c \ud45c\ud558\uc2dc\uc624."
+    },
+    "_CGCOM_VERSION" : 2
+}

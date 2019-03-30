@@ -12,7 +12,7 @@ class CommandSearch:
 
     @commands.command(aliases=["cmds", "coms"])
     async def commandsearch(self, search_string: str):
-        """Search commands"""
+        """명령어를 검색합니다!"""
         # Build commands list
         commands_flat = {}
         for k, v in self.bot.commands.items():
@@ -26,13 +26,13 @@ class CommandSearch:
         cogs = "\n".join([str(commands_flat[m].cog_name) for m in matches])
         if not matches:
             embed = discord.Embed(colour=0xcc0000)
-            embed.description = "No results for '{}'".format(search_string)
+            embed.description = "'{}'에 대한 명령어는 없습니다!".format(search_string)
             await self.bot.say(embed=embed)
         elif len(cmds) < 900 and len(cogs) < 900:
             embed = discord.Embed(colour=0x00cc00)
-            embed.add_field(name="Command", value=cmds)
+            embed.add_field(name="명령어", value=cmds)
             embed.add_field(name="Cog", value=cogs)
-            embed.set_footer(text="{} result{} for '{}'".format(
+            embed.set_footer(text="'{}'의 검색 결과는 총 {} '{}'".format(
                 len(matches), "" if len(matches) == 1 else "s", search_string))
             await self.bot.say(embed=embed)
         else:

@@ -32,8 +32,8 @@ class CommandSearch:
             embed = discord.Embed(colour=0x00cc00)
             embed.add_field(name="명령어", value=cmds)
             embed.add_field(name="Cog", value=cogs)
-            embed.set_footer(text="'{}'의 검색 결과는 총 {} '{}'".format(
-                len(matches), "" if len(matches) == 1 else "s", search_string))
+            embed.set_footer(text="'{}'의 검색 결과는 총 {} '{}'개 입니다!".format(
+              search_string, "" if len(matches) == 1 else "s", len(matches)))
             await self.bot.say(embed=embed)
         else:
             maxlen = len(max(matches, key=len))

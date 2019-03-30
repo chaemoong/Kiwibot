@@ -136,11 +136,11 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
     if reqs:
         try:
             shutil.rmtree(REQS_DIR, onerror=remove_readonly)
-            print("Installed local packages have been wiped.")
+            print("설치된 로컬 패키지가 지워졌습니다..")
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occurred when trying to remove installed "
+            print("설치 제거 중 오류가 발생했습니다. "
                   "requirements: {}".format(e))
     if data:
         try:

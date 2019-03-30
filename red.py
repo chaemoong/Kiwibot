@@ -13,10 +13,7 @@ try:
     from discord.ext import commands
     import discord
 except ImportError:
-    print("Discord.py이 설치 되어있지 않습니다\n"
-          "Consult the guide for your operating system "
-          "and do ALL the steps in order.\n"
-          "https://twentysix26.github.io/Red-Docs/\n")
+    print("Discord.py이 설치 되어있지 않습니다! 곧 설치를 시작합니다!")
     os.system('pip install discord')
     try:
         from discord.ext import commands
@@ -313,29 +310,29 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         owner = await set_bot_owner()
 
         print("-----------------")
-        print("Red - Discord Bot")
+        print("레드 - 디스코드 봇")
         print("-----------------")
         print(str(bot.user))
-        print("\nConnected to:")
-        print("{} servers".format(servers))
-        print("{} channels".format(channels))
-        print("{} users\n".format(users))
+        print("\n연결된 정보:")
+        print("{} 서버".format(servers))
+        print("{} 채널".format(channels))
+        print("{} 유저\n".format(users))
         prefix_label = 'Prefix'
         if len(bot.settings.prefixes) > 1:
             prefix_label += 'es'
         print("{}: {}".format(prefix_label, " ".join(bot.settings.prefixes)))
-        print("Owner: " + str(owner))
-        print("{}/{} active cogs with {} commands".format(
+        print("주인: " + str(owner))
+        print("{}/{} cog가 활성화 되었고 {} 개의 명령어가 있습니다!".format(
             len(bot.cogs), total_cogs, len(bot.commands)))
         print("-----------------")
 
         if bot.settings.token and not bot.settings.self_bot:
-            print("\nUse this url to bring your bot to a server:")
+            print("\n이 주소로 이 봇을 데려갈 수 있습니다!:")
             url = await get_oauth_url()
             bot.oauth_url = url
             print(url)
 
-        print("\nOfficial server: https://discord.gg/red")
+        print("\n공식 서버: https://discord.gg/red")
 
         print("Make sure to keep your bot updated. Select the 'Update' "
               "option from the launcher.")

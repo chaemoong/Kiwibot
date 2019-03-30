@@ -19,7 +19,7 @@ class shortenurl:
         """네이버 API키를 통하여 긴 주소를 짧은 주소로 변형 시켜주는 명령어 입니다!"""
         client_id = "" # 개발자센터에서 발급받은 Client ID 값
         client_secret = "" # 개발자센터에서 발급받은 Client Secret 값
-        m = url.content
+        m = url
         encText = urllib.parse.quote(m[7:])
         data = "url=" + encText
         api = "https://openapi.naver.com/v1/util/shorturl"

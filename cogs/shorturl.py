@@ -17,8 +17,8 @@ class shortenurl:
     @commands.command(pass_context=True)
     async def shorten(self, url):
         """네이버 API키를 통하여 긴 주소를 짧은 주소로 변형 시켜주는 명령어 입니다!"""
-        client_id = "vrB8qDDixeTRXJ1yZ623" # 개발자센터에서 발급받은 Client ID 값
-        client_secret = "0KW93dNKvW" # 개발자센터에서 발급받은 Client Secret 값
+        client_id = "" # 개발자센터에서 발급받은 Client ID 값
+        client_secret = "" # 개발자센터에서 발급받은 Client Secret 값
         m = url.content
         encText = urllib.parse.quote(m[7:])
         data = "url=" + encText

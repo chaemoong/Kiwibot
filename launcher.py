@@ -26,7 +26,7 @@ REQS_NO_AUDIO_TXT = "requirements_no_audio.txt"
 FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
 INTRO = ("==========================\n"
-         "Red Discord Bot - Launcher\n"
+         "레드 봇 \n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
@@ -70,7 +70,7 @@ def install_reqs(audio):
     interpreter = sys.executable
 
     if interpreter is None:
-        print("Python interpreter not found.")
+        print("파이썬 인터프리터를 찾을 수 없음")
         return
 
     txt = REQS_TXT if audio else REQS_NO_AUDIO_TXT
@@ -90,17 +90,17 @@ def install_reqs(audio):
     code = subprocess.call(args)
 
     if code == 0:
-        print("\nRequirements setup completed.")
+        print("\n요구 사항 설정이 완료되었습니다.")
     else:
-        print("\nAn error occurred and the requirements setup might "
-              "not be completed. Consult the docs.\n")
+        print("\n오류가 발생했으며 요구 사항 설정이 "
+              "완료하지 마십시오. 문서를 참조하십시오..\n")
 
 
 def update_pip():
     interpreter = sys.executable
 
     if interpreter is None:
-        print("Python interpreter not found.")
+        print("파이썬 인터프리터가 없습니다.")
         return
 
     args = [
@@ -112,7 +112,7 @@ def update_pip():
     code = subprocess.call(args)
 
     if code == 0:
-        print("\nPip has been updated.")
+        print("\nPip가 업데이트되었습니다.")
     else:
         print("\nAn error occurred and pip might not have been updated.")
 

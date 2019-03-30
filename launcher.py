@@ -114,22 +114,22 @@ def update_pip():
     if code == 0:
         print("\nPip가 업데이트되었습니다.")
     else:
-        print("\nAn error occurred and pip might not have been updated.")
+        print("\n오류가 발생했으며 pip가 업데이트되지 않았을 수 있습니다.")
 
 
 def update_red():
     try:
         code = subprocess.call(("git", "pull", "--ff-only"))
     except FileNotFoundError:
-        print("\nError: Git not found. It's either not installed or not in "
-              "the PATH environment variable like requested in the guide.")
+        print("\n오류 : 힘내 찾을 수 없습니다. 그것은 설치되지 않았거나 "
+              "PATH 환경 변수는 가이드에서 요청한 것과 같습니다.")
         return
     if code == 0:
-        print("\nRed has been updated")
+        print("\n레드 봇 업데이트")
     else:
-        print("\nRed could not update properly. If this is caused by edits "
-              "you have made to the code you can try the repair option from "
-              "the Maintenance submenu")
+        print("\n빨간색이 제대로 업데이트되지 않았습니다. 이것이 편집으로 인해 발생하는 경우 "
+              "코드에서 수리 옵션을 시도 할 수 있습니다"
+              "유지 관리 하위 메뉴")
 
 
 def reset_red(reqs=False, data=False, cogs=False, git_reset=False):

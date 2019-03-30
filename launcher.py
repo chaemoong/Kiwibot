@@ -196,11 +196,11 @@ def download_ffmpeg(bitness):
                 continue
             else:
                 print("Hash mismatch. Redownloading.")
-        print("Downloading {}... Please wait.".format(filename))
+        print("{}을 다운로드 하고 있는 중입니다! 잠시만 기달려 주.".format(filename))
         with urllib.request.urlopen(repo + filename) as data:
             with open(filename, "wb") as f:
                 f.write(data.read())
-        print("Download completed.")
+        print("다운로드가 완료되었습니다!.")
 
     for filename, _hash in FFMPEG_FILES.items():
         if filename in verified:
@@ -401,7 +401,7 @@ def clear_screen():
 
 def wait():
     if INTERACTIVE_MODE:
-        input("Press enter to continue.")
+        input("엔터를 눌러 계속 하십시오.")
 
 
 def user_choice():
@@ -479,7 +479,7 @@ def create_fast_start_scripts():
 
     for filename, content in files.items():
         if not os.path.isfile(filename):
-            print("Creating {}... (fast start scripts)".format(filename))
+            print("{}을 만드는 중.... (fast start scripts)".format(filename))
             modified = True
             with open(filename, "w") as f:
                 f.write(content)
@@ -491,7 +491,7 @@ def create_fast_start_scripts():
 
 
 def main():
-    print("Verifying git installation...")
+    print("git 설치 확인 중...")
     has_git = is_git_installed()
     is_git_installation = os.path.isdir(".git")
     if IS_WINDOWS:
@@ -519,12 +519,12 @@ def main():
                   "installed or not in the PATH environment variable like "
                   "requested in the guide.\n")
 
-        print("1. Run Red /w autorestart in case of issues")
-        print("2. Run Red")
-        print("3. Update")
-        print("4. Install requirements")
-        print("5. Maintenance (repair, reset...)")
-        print("\n0. Quit")
+        print("1. 레드봇을 작동합니다! 자동재시작 포함")
+        print("2. 레드봇을 작동합니다!")
+        print("3. 업데이트")
+        print("4. 설치해야할 필요한 것들")
+        print("5. 위급할때 건드는 곳 (고치기, 리셋...)")
+        print("\n0. 나가기")
         choice = user_choice()
         if choice == "1":
             run_red(autorestart=True)
@@ -569,5 +569,5 @@ if __name__ == '__main__':
     if INTERACTIVE_MODE:
         main()
     elif args.start:
-        print("Starting Red...")
+        print("봇을 실행하는중...")
         run_red(autorestart=args.auto_restart)

@@ -13,7 +13,7 @@ try:
     from discord.ext import commands
     import discord
 except ImportError:
-    print("Discord.py is not installed.\n"
+    print("Discord.py이 설치 되어있지 않습니다\n"
           "Consult the guide for your operating system "
           "and do ALL the steps in order.\n"
           "https://twentysix26.github.io/Red-Docs/\n")

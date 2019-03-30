@@ -24,7 +24,7 @@ class RPS(Enum):
 class RPSParser:
     def __init__(self, argument):
         argument = argument.lower()
-        if argument == "주먹":
+        if argument == "바위":
             self.choice = RPS.rock
         elif argument == "보":
             self.choice = RPS.paper
@@ -44,13 +44,10 @@ class General:
 
     @commands.command()
     async def choose(self, *choices):
-        """Chooses between multiple choices.
-
-        To denote multiple choices, you should use double quotes.
-        """
+        """어떤것을 고를지 모르겠으면 이 명령어를 사용해봐요!"""
         choices = [escape_mass_mentions(c) for c in choices]
         if len(choices) < 2:
-            await self.bot.say('Not enough choices to pick from.')
+            await self.bot.say('잘못된 사용 방법입니다!')
         else:
             await self.bot.say(choice(choices))
 
@@ -103,11 +100,11 @@ class General:
         author = ctx.message.author
         if not author.id in self.stopwatches:
             self.stopwatches[author.id] = int(time.perf_counter())
-            await self.bot.say(author.mention + " Stopwatch started!")
+            await self.bot.say(author.mention + " 스톱워치 시작!")
         else:
             tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
-            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
+            await self.bot.say(author.mention + " 스톱워치 종료! 시간: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
 
     @commands.command()
@@ -185,10 +182,6 @@ class General:
 
         if user.game is None:
             pass
-        elif user.game.url is None:
-            game = "{}를 플레이중".format(user.game)
-        elif user.game is "Spotify":
-            game = 'Spotify 에서 노래 듣는중'
         else:
             game = "[{}]에서 ({})를 하는중".format(user.game, user.game.url)
 
@@ -260,7 +253,7 @@ class General:
         try:
             await self.bot.say(embed=data)
         except discord.HTTPException:
-            await self.bot.say("`Embed links`권한이 있어야 서버 정보를"
+            await self.bot.say("`Embed links` 권한이 있어야 서버 정보를"
                                "보낼 수 있어요")
     @commands.command()
     async def urban(self, *, search_terms : str, definition_number : int=1):

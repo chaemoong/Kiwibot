@@ -20,7 +20,7 @@ class shortenurl:
         client_id = "" # 개발자센터에서 발급받은 Client ID 값
         client_secret = "" # 개발자센터에서 발급받은 Client Secret 값
         m = url
-        encText = urllib.parse.quote(m[7:])
+        encText = urllib.parse.quote(m)
         data = "url=" + encText
         api = "https://openapi.naver.com/v1/util/shorturl"
         request = urllib.request.Request(api)

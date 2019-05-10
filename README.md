@@ -4,4 +4,4 @@
 
 # 탓쿠
 
-저가 열심히 하고 있습니다 [ Workplace ](https://discord.gg/qkjXH4f)로 들어가세욧..!
+저가 열심히 하고 있습니다 [ Workplace ](https://discord.gg/KNBGZU2)로 들어가세욧..!

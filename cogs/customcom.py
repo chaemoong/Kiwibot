@@ -28,13 +28,14 @@ class CustomCommands:
         """커스텀 명령어를 추가합니다
 
         예:
-        !!cc add <명령어> <원하는 멘트>
+        k!cc add <명령어> <원하는 멘트>
         """
         server = ctx.message.server
         command = command.lower()
         if command in self.bot.commands:
             embed = discord.Embed(
-                title='잠시만요!'
+                title='잠시만요!',
+                colour = discord.Colour.red()
             )
             embed.add_field(name='그 명령어는 봇 명령어에 존재합니다!', value='그 명령어 말고 다른 멘트로 해주시기 바랍니다!')
             await self.bot.say(embed=embed)

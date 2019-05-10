@@ -19,7 +19,7 @@ class countdown:
                 await self.bot.say("I dont think im allowed to do negatives \U0001f914")
                 raise BaseException
 
-            message = await self.bot.say("```css" + "\n" + "[" + title +"]" + "\nTimer: " + remaining(finish)[0] + "```")
+            message = await self.bot.say("```css" + "\n" + "[" + title +"]" + "\n타이머: " + remaining(finish)[0] + "```")
             channelID = ctx.message.channel.id
             msgID = message.id
             while True:
@@ -27,13 +27,13 @@ class countdown:
                 message = await self.bot.get_message(channel, msgID)
                 timer, done = remaining(finish)
                 if done:
-                    await self.bot.edit_message(message, new_content=("```끝!!```"))
+                    await self.bot.edit_message(message, new_content=("```끝!```"))
                     break
-                await self.bot.edit_message(message, new_content=("```css" + "\n" + "[" + title + "]" + "\nTimer: {0}```".format(timer)))
+                await self.bot.edit_message(message, new_content=("```css" + "\n" + "[" + title + "]" + "\n시간: {0}```".format(timer)))
                 await asyncio.sleep(1)
-            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention +  "[" + title + "]"  + "가 주제인 타이머가 끝났습니다!!")
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention +  "[" + title + "]"  + "가 주제인 타이머가 끝났습니다!")
         except ValueError:
-            await self.bot.say("몇 초를 할것인지 정해야 합니다!!")
+            await self.bot.say("타이머를 몇초를 할지 정해야 합니다!!")
 
 def setup(bot):
     n = countdown(bot)

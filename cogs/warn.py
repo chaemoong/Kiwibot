@@ -30,20 +30,27 @@ default_warn = ("user.mention님께서 경고 1회를 받으셨습니다. \n"
                 "경고 warn.limit회가 누적되면 벤을 맞이하게 될것입니다!")
 default_max = 10
 default_ban = ("그는 경고 warn.limit개가 되었으므로, user.name는 벤 되었습니다!")
+class ModError(Exception):
+    pass
 
+class NoModLogChannel(ModError):
+    pass
 
 class Warn:
-
     def __init__(self, bot):
         self.bot = bot
         self.profile = "data/account/warnings.json"
         self.riceCog = dataIO.load_json(self.profile)
         settings = dataIO.load_json("data/mod/settings.json")
         self.settings = defaultdict(lambda: default_settings.copy(), settings)
+        self.cases = dataIO.load_json("data/mod/settings.json")
         self.warning_settings = "data/account/warning_settings.json"
         self.riceCog2 = dataIO.load_json(self.warning_settings)
+        self.global_ignores = dataIO.load_json("data/account/warning_reason.json")
+        settings = dataIO.load_json("data/mod/settings.json")
         if not self.bot.get_cog("Mod"):
             print("You need the Mod cog to run this cog effectively!")
+        
 
     @commands.group(no_pm=True, pass_context=True, name='warnset')
     async def _warnset(self, ctx):
@@ -320,7 +327,6 @@ class Warn:
                 data.add_field(name="사유",
                                value=reason,
                                inline=False)
-
             data.set_footer(text=self.bot.user.name)
             if p:
                 await self.bot.send_message(user, embed=data)
@@ -348,6 +354,8 @@ class Warn:
             if p:
                 await self.bot.send_message(user, embed=data)
             elif not p:
+                mod_channel = server.get_channel(settings[server.id]["mod-log"])
+                await self.bot.send_message(mod_channel, 'test')
                 await self.bot.say(embed=data)
             count = 0
             self.riceCog[server.id][user.id].update({"Count": count})
@@ -484,11 +492,11 @@ def check_file():
     f = "data/account/warnings.json"
     g = "data/account/warning_settings.json"
     if not dataIO.is_valid_json(f):
-        print("Creating data/account/warnings.json")
+        print("data/account/warnings.json 파일을 만드는 중...")
         dataIO.save_json(f,
                          data)
     if not dataIO.is_valid_json(g):
-        print("Creating data/account/warning_settings.json")
+        print("data/account/warning_settings.json 파일을 만드는 중...")
         dataIO.save_json(g,
                          data)
 

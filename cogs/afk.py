@@ -12,7 +12,7 @@ class Afk:
         self.profile = "data/afk/afk.json"
         self.riceCog = dataIO.load_json(self.profile)
         
-    @commands.command(pass_context=True)
+    @commands.command(no_pm=True, pass_context=True)
     async def afk(self, ctx, *, reason=None):
         """잠수 명령어 입니다! \n 많이 부족하지만... 많이 사용해주세요!"""
         timedata = datetime
@@ -22,12 +22,12 @@ class Afk:
         user = author
         self.data[author.id] = int(time.perf_counter())
         afkstart = discord.Embed(colour=user.colour)
-        afkstart.add_field(name='잠수 시작!', value='{} 님의 잠수가 시작되었습니다!\n잠수 상태를 해제 하고 싶을시 아주 메시지나 작성 하시면 됩니다!'.format(author.name))
+        afkstart.add_field(name='잠수 시작!', value='{} 님의 잠수가 시작되었습니다!\n잠수 상태를 해제 하고 싶을시 아무 메시지나 작성 하시면 됩니다!'.format(author.name))
         afkstart.set_footer(text='잠수 시작 시간 {}-{}-{} {}:{}:{}'.format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
         afkstart_reason = discord.Embed(
             colour=user.colour        
             )
-        afkstart_reason.add_field(name='잠수 시작!', value='{} 님의 잠수가 시작되었습니다!\n잠수 상태를 해제 하고 싶을시 아주 메시지나 작성 하시면 됩니다!'.format(author.name))
+        afkstart_reason.add_field(name='잠수 시작!', value='{} 님의 잠수가 시작되었습니다!\n잠수 상태를 해제 하고 싶을시 아무 메시지나 작성 하시면 됩니다!'.format(author.name))
         afkstart_reason.add_field(name='사유', value='```\n{}\n```'.format(reason))
         afkstart_reason.set_footer(text='잠수 시작 시간 {}-{}-{} {}:{}:{}'.format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
         if not reason:
@@ -36,6 +36,17 @@ class Afk:
             dataIO.save_json(self.profile,
                          self.riceCog)
             await self.bot.say(embed=afkstart)
+        elif '```\n' in reason or '```' in reason:
+            await self.bot.say("당신은 키위봇 afk 명렁어 사용법 위반으로 블랙리스트에 추가되었습니다!\n이것에 관하여 문의가 있으면 chaemoong#8612으로 문의 해주시기 바랍니다")
+            try:
+                cog = self.bot.get_cog('Owner')
+                cog.global_ignores["blacklist"].append(author.id)
+                cog.save_global_ignores()
+                mod = self.bot.get_cog('Mod')
+                mod_channel = server.get_channel(mod.settings[server.id]["mod-log"])
+                await self.bot.send_message(mod_channel, '**처리번호 #**:thinking: | 블랙리스트\n**유저:** {} ({})\n**관리자:** {} ({})\n**사유:** 키위봇 afk 기능 사용법 위반'.format(author, author.id, self.bot.user, self.bot.user.id))
+            except:
+                pass
         else:
             try:
                 self.riceCog[user.id] = {}

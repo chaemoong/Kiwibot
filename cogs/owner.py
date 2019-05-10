@@ -61,63 +61,57 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def load(self, *, cog_name: str):
-        """Loads a cog
-
-        Example: load mod"""
+        """기능을 불러옵니다!
+        
+        예시: k!load mod"""
         module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That cog could not be found.")
+            await self.bot.say("그 기능은 존재 하지 않는 기능입니다")
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("There was an issue loading the cog. Check"
-                               " your console or logs for more information.")
+            await self.bot.say("그 기능을 불러오는 도중 에러가 발생하였습니다!\n콘솔 혹은 터미널을 확인해주세요!")
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Cog was found and possibly loaded but '
-                               'something went wrong. Check your console '
-                               'or logs for more information.')
+            await self.bot.say("그 기능을 불러오는 도중 에러가 발생하였습니다!\n콘솔 혹은 터미널을 확인해주세요!")
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("명령어가 추가 되었습니다!")
+            await self.bot.say("기능이 추가 되었습니다!")
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
     async def unload(self, *, cog_name: str):
-        """Unloads a cog
+        """기능을 비활성화 합니다!
 
-        Example: unload mod"""
+        예시: unload mod"""
         module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
         if not self._does_cogfile_exist(module):
-            await self.bot.say("That cog file doesn't exist. I will not"
-                               " turn off autoloading at start just in case"
-                               " this isn't supposed to happen.")
+            await self.bot.say("그 기능을 찾을 수 없습니다!")
         else:
             set_cog(module, False)
         try:  # No matter what we should try to unload it
             self._unload_cog(module)
         except OwnerUnloadWithoutReloadError:
-            await self.bot.say("I cannot allow you to unload the Owner plugin"
-                               " unless you are in the process of reloading.")
+            await self.bot.say("오너 기능은 비활성화 할 수 없습니다!")
         except CogUnloadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Unable to safely unload that cog.')
+            await self.bot.say('비활성화 도중 에러가 발생했습니다!')
         else:
             await self.bot.say("그 기능은 사용 불가 입니다!")
 
     @unload.command(name="all")
     @checks.is_owner()
     async def unload_all(self):
-        """Unloads all cogs"""
+        """모든 기능을 비활성화 합니다!"""
         cogs = self._list_cogs()
         still_loaded = []
         for cog in cogs:
@@ -140,9 +134,9 @@ class Owner:
     @checks.is_owner()
     @commands.command(name="reload")
     async def _reload(self, *, cog_name: str):
-        """Reloads a cog
+        """기능을 리로드 합니다!
 
-        Example: reload audio"""
+        예시: reload audio"""
         module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
@@ -184,9 +178,9 @@ class Owner:
         if not unloaded:
             unloaded = ["None"]
 
-        msg = ("+ Loaded\n"
+        msg = ("+ 로드됨\n"
                "{}\n\n"
-               "- Unloaded\n"
+               "- 언로드됨\n"
                "{}"
                "".format(", ".join(sorted(loaded)),
                          ", ".join(sorted(unloaded)))
@@ -194,10 +188,23 @@ class Owner:
         for page in pagify(msg, [" "], shorten_by=16):
             await self.bot.say(box(page.lstrip(" "), lang="diff"))
 
+    @commands.command(pass_context=True, no_pm=True)
+    @checks.is_owner()
+    async def rules(self, ctx):
+        """팀멜론 규칙 (사용금지)"""
+        em = discord.Embed(colour=discord.Colour.green(), title='팀 멜론 서포트 규칙')
+        em.add_field(name='아래의 규칙을 어길시 벤 처리 합니다', value='```diff\n- 이 서버의 인원에게 부모님 욕(일명 패드립), 성희롱, 비하발언을 사용하면 안됩니다!\n+ DM(PM)으로 하시는건 더더욱 안됩니다!\n- 바이러스 파일 업로드 금지.\n- 프로필사진이 음란물이 관련되어있으면 변경을 해주시기 바랍니다.```')
+        em.add_field(name='이 아래에 있는 모든 규칙들은 경고로 처리됩니다!', value='```fix\n> 타인에게 욕을 하시면 안됩니다!\n> 도배 금지(예시: 따로 사진으로 업로드 됩니다)\n> 단타도배(예시: 따로 사진으로 업로드 됩니다!)\n> 홍보는 전면 금지입니다[디스코드 서버는 모두 처벌, 유튜브 링크는 관리자가 보이게 괜찮다고 생각하면 상관 X]\n>분쟁 유도는 금지입니다! [가벼운 분쟁이면 경고 조치하지만 심하게 갈 경우 벤 조치 하도록 하겠습니다]\n```')
+        em.add_field(name='이모지 및 반응 추가 규칙', value='```diff\n+ 욕 이모지 금지\n+ 음란물을 표현하는 이모지 추가 금지\n+ 이모지 도배 금지```[예시 : :thinking: :thinking: :thinking: :thinking: :thinking: :thinking: :thinking: :thinking:]')
+        em.add_field(name='음성 채팅방 규칙', value='음성 채널이여도 욕설은 금지 됩니다! [증거 없을시 처벌안됩니다!]\n소음을 유발하는 행위는 금지합니다!\n<@184405311681986560> 봇 사용금지')
+        em.add_field(name='관리자 신고', value='일반 유저가 아닌 관리자가 규칙을 어겼을시 <@417123204469882890>으로 DM(PM) 부탁드립니다!')
+        em.set_footer(text='도리닭 님의 규칙을 사용하였음을 알려드립니다!')
+        await self.bot.say(embed=em)
+
     @commands.command(pass_context=True, hidden=True)
     @checks.is_owner()
-    async def cmd(self, ctx, *, code):
-        """Evaluates code"""
+    async def cmd(self, ctx, *, code=None):
+        """코드 쑤셔 박기(?)"""
         def check(m):
             if m.content.strip().lower() == "more":
                 return True
@@ -209,12 +216,12 @@ class Owner:
         result = None
 
         global_vars = globals().copy()
-        global_vars['self.bot'] = self.bot
+        global_vars['bot'] = self.bot
         global_vars['ctx'] = ctx
-        global_vars['ctx.message'] = ctx.message
-        global_vars['ctx.message.author'] = ctx.message.author
-        global_vars['ctx.message.channel'] = ctx.message.channel
-        global_vars['ctx.message.server'] = ctx.message.server
+        global_vars['message'] = ctx.message
+        global_vars['author'] = ctx.message.author
+        global_vars['channel'] = ctx.message.channel
+        global_vars['server'] = ctx.message.server
 
         try:
             result = eval(code, global_vars, locals())
@@ -262,7 +269,7 @@ class Owner:
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):
-        """Changes Red's core settings"""
+        """키위봇을 설정하는 명령어입니다!"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             return
@@ -277,7 +284,7 @@ class Owner:
                                "command.")
             return
         if self.setowner_lock:
-            await self.bot.say("A set owner command is already pending.")
+            await self.bot.say("이 명령어는 잠겨져 있습니다!")
             return
 
         if self.bot.settings.owner is not None:

@@ -91,7 +91,7 @@ class Leveler:
 
         # check if disabled
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         # no cooldown for text only
@@ -118,13 +118,13 @@ class Leveler:
                 return text
 
         em = discord.Embed(description='', colour=user.colour)
-        em.add_field(name="Title:", value = test_empty(userinfo["title"]))
-        em.add_field(name="Reps:", value= userinfo["rep"])
-        em.add_field(name="Global Rank:", value = '#{}'.format(await self._find_global_rank(user)))
-        em.add_field(name="Server Rank:", value = '#{}'.format(await self._find_server_rank(user, server)))
-        em.add_field(name="Server Level:", value = format(userinfo["servers"][server.id]["level"]))
-        em.add_field(name="Total Exp:", value = userinfo["total_exp"])
-        em.add_field(name="Server Exp:", value = await self._find_server_exp(user, server))
+        em.add_field(name="제목:", value = test_empty(userinfo["title"]))
+        em.add_field(name="추천 수:", value= userinfo["rep"])
+        em.add_field(name="글로벌 랭크:", value = '#{}'.format(await self._find_global_rank(user)))
+        em.add_field(name="서버 랭크:", value = '#{}'.format(await self._find_server_rank(user, server)))
+        em.add_field(name="서버 레벨:", value = format(userinfo["servers"][server.id]["level"]))
+        em.add_field(name="모든 경험치:", value = userinfo["total_exp"])
+        em.add_field(name="서버 경험치:", value = await self._find_server_exp(user, server))
         try:
             bank = self.bot.get_cog('Economy').bank
             if bank.account_exists(user):
@@ -133,10 +133,10 @@ class Leveler:
                 credits = 0
         except:
             credits = 0
-        em.add_field(name="Credits: ", value = "${}".format(credits))
-        em.add_field(name="Info: ", value = test_empty(userinfo["info"]))
-        em.add_field(name="Badges: ", value = test_empty(", ".join(userinfo["badges"])).replace("_", " "))
-        em.set_author(name="Profile for {}".format(user.name), url = user.avatar_url)
+        em.add_field(name="돈: ", value = "${}".format(credits))
+        em.add_field(name="정보: ", value = test_empty(userinfo["info"]))
+        em.add_field(name="뱃지: ", value = test_empty(", ".join(userinfo["badges"])).replace("_", " "))
+        em.set_author(name="{} 님의 프로필 입니다!".format(user.name), url = user.avatar_url)
         em.set_thumbnail(url=user.avatar_url)
         return em
 
@@ -155,7 +155,7 @@ class Leveler:
 
         # check if disabled
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         # no cooldown for text only
@@ -199,7 +199,7 @@ class Leveler:
         user = ctx.message.author
 
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         users = []
@@ -330,7 +330,7 @@ class Leveler:
         curr_time = time.time()
 
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
         if user and user.id == org_user.id:
             await self.bot.say("**You can't give a rep to yourself!**")
@@ -374,7 +374,7 @@ class Leveler:
         server = ctx.message.server
 
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         # creates user if doesn't exist
@@ -468,7 +468,7 @@ class Leveler:
         default_a = 200
 
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         if "text_only" in self.settings and server.id in self.settings["text_only"]:
@@ -574,7 +574,7 @@ class Leveler:
         default_a = 200
 
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         if "text_only" in self.settings and server.id in self.settings["text_only"]:
@@ -659,7 +659,7 @@ class Leveler:
         default_a = 200
 
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         if "text_only" in self.settings and server.id in self.settings["text_only"]:
@@ -918,7 +918,7 @@ class Leveler:
             num_users += 1
 
         msg = ""
-        msg += "**Servers:** {}\n".format(len(self.bot.servers))
+        msg += "**서버:** {}\n".format(len(self.bot.servers))
         msg += "**Unique Users:** {}\n".format(num_users)
         if "mention" in self.settings.keys():
             msg += "**Mentions:** {}\n".format(str(self.settings["mention"]))
@@ -1025,7 +1025,7 @@ class Leveler:
             await self.bot.say("**That is not a valid background price.**")
         else:
             self.settings["bg_price"] = price
-            await self.bot.say("**Background price set to: `{}`!**".format(price))
+            await self.bot.say("**배경사진 가격이 `{}`원으로 설정되었습니다!**".format(price))
             fileIO('data/leveler/settings.json', "save", self.settings)
 
     @checks.is_owner()
@@ -1044,7 +1044,7 @@ class Leveler:
             return
 
         if level < 0:
-            await self.bot.say("**Please enter a positive number.**")
+            await self.bot.say("**제대로 된 숫자를 작성해주세요!**")
             return
 
         # get rid of old level exp
@@ -1065,19 +1065,19 @@ class Leveler:
             "servers.{}.current_exp".format(server.id): 0,
             "total_exp": userinfo["total_exp"]
             }})
-        await self.bot.say("**{}'s Level has been set to `{}`.**".format(self._is_mention(user), level))
+        await self.bot.say("**{}'님의 레벨이 `{}`으로 설정되었습니다!**".format(self._is_mention(user), level))
         await self._handle_levelup(user, userinfo, server, channel)
 
     @checks.is_owner()
     @lvladmin.command(no_pm=True)
     async def mention(self):
-        '''Toggle mentions on messages.'''
+        '''멘션을 켜고 끄고 합니다!'''
         if "mention" not in self.settings.keys() or self.settings["mention"] == True:
             self.settings["mention"] = False
             await self.bot.say("**멘션이 해제되었습니다.**")
         else:
             self.settings["mention"] = True
-            await self.bot.say("**멘션이 가능하게되었습니다.**")
+            await self.bot.say("**멘션이 가능하게 되었습니다.**")
         fileIO('data/leveler/settings.json', "save", self.settings)
 
     async def _valid_image_url(self, url):
@@ -1154,12 +1154,12 @@ class Leveler:
             if user.id == self.owner:
                 if all == "disableall":
                     self.settings["lvl_msg"] = []
-                    await self.bot.say("**레벨업 메시지가 모든 서버에 적용되지 않습니다.**")
+                    await self.bot.say("**레벨업 메시지가 서버에 적용되지 않습니다.**")
                 elif all == "enableall":
                     self.settings["lvl_msg"] = []
                     for server in self.bot.servers:
                         self.settings["lvl_msg"].append(server.id)
-                    await self.bot.say("**레벨업 메시지가 모든 서버에 적용됩니다.**")
+                    await self.bot.say("**레벨업 메시지가 서버에 적용됩니다.**")
             else:
                 await self.bot.say("**권한 없음.**")
         else:
@@ -1886,7 +1886,7 @@ class Leveler:
         max_all = 18
 
         if server.id in self.settings["disabled_servers"]:
-            await self.bot.say("**Leveler commands for this server are disabled!**")
+            await self.bot.say("**Leveler 명령어는 현재 비활성화 되었습니다!**")
             return
 
         em = discord.Embed(description='', colour=user.colour)

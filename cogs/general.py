@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from cogs.utils.dataIO import dataIO
 from .utils.chat_formatting import escape_mass_mentions, italics, pagify
 from random import randint
 from random import choice
@@ -24,7 +25,7 @@ class RPS(Enum):
 class RPSParser:
     def __init__(self, argument):
         argument = argument.lower()
-        if argument == "바위":
+        if argument == "주먹":
             self.choice = RPS.rock
         elif argument == "보":
             self.choice = RPS.paper
@@ -41,13 +42,17 @@ class General:
         self.bot = bot
         self.stopwatches = {}
         self.poll_sessions = []
+        self.data = dataIO.load_json('data/server.region/region.json')
 
     @commands.command()
     async def choose(self, *choices):
-        """어떤것을 고를지 모르겠으면 이 명령어를 사용해봐요!"""
+        """Chooses between multiple choices.
+
+        To denote multiple choices, you should use double quotes.
+        """
         choices = [escape_mass_mentions(c) for c in choices]
         if len(choices) < 2:
-            await self.bot.say('잘못된 사용 방법입니다!')
+            await self.bot.say('Not enough choices to pick from.')
         else:
             await self.bot.say(choice(choices))
 
@@ -100,11 +105,11 @@ class General:
         author = ctx.message.author
         if not author.id in self.stopwatches:
             self.stopwatches[author.id] = int(time.perf_counter())
-            await self.bot.say(author.mention + " 스톱워치 시작!")
+            await self.bot.say(author.mention + " Stopwatch started!")
         else:
             tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
-            await self.bot.say(author.mention + " 스톱워치 종료! 시간: **" + tmp + "**")
+            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
 
     @commands.command()
@@ -182,6 +187,10 @@ class General:
 
         if user.game is None:
             pass
+        elif user.game.url is None:
+            game = "{}를 플레이중".format(user.game)
+        elif user.game is "Spotify":
+            game = 'Spotify 에서 노래 듣는중'
         else:
             game = "[{}]에서 ({})를 하는중".format(user.game, user.game.url)
 
@@ -220,6 +229,7 @@ class General:
         server = ctx.message.server
         online = len([m.status for m in server.members
                       if m.status != discord.Status.offline])
+        region = server.region
         total_users = len(server.members)
         text_channels = len([x for x in server.channels
                              if x.type == discord.ChannelType.text])
@@ -233,14 +243,63 @@ class General:
         colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
         colour = int(colour, 16)
 
+        yee = self.data[region]
+
+        game = "{}".format(server.verification_level)
+
+        if region is 'japan':
+            region = ':flag_jp: 일본'
+        elif region is 'brazil':
+            region = ':flag_br: 브라질'
+        elif region is 'eu-central':
+            region = ':flag_eu: 유럽 중앙부'
+        elif region is 'hongkong':
+            region = ':flag_hk: 홍콩'
+        elif region is 'india':
+            region = ':flag_in: 인도'
+        elif region is 'eu-west':
+            region = ':flag_eu: 유럽 동부'
+        elif region is 'us-west':
+            region = ':flag_us: 미국 동부'
+        elif region is 'us-south':
+            region = ':flag_us: 미국 남부'
+        elif region is 'us-east':
+            region = ':flag_us: 미국 서부'
+        elif region is 'us-central':
+            region = ':flag_us: 미국 중앙부'
+        elif region is 'russia':
+            region = ':flag_ru: 러시아'
+        elif region is 'singapore':
+            region = ':flag_sg: 싱가포르'
+        elif region is 'sydney':
+            region = ':flag_au: 시드니'
+        elif region is 'southafrica':
+            region = ':flag_ss: 남 아프리카'
+        else:
+            pass
+
+        if game is 'none':
+            game = '없음\n**(아무 제한도 없어요!)**'
+        elif game is 'low':
+            game = '낮음\n**(자신의 디스코드 계정이 이메일 인증을 받은적이 있어야 해요!)**'
+        elif game is 'medium':
+            game = '중간\n**(자신의 디스코드 계정이 이메일 인증을 받은적이 있어야 하고 가입한지 5분이 지나야 합니다!)**'
+        elif game is 'high':
+            game = '높음\n**(자신의 디스코드 계정이 이메일 인증을 받은적이 있어야 하고 가입한지 5분이 지나야 하고 멤버가 된지 10분이 되어야 합니다!)**'
+        elif game is '4':
+            game = '**매우 높음\n(전화 인증이 완료된 디스코드 계정 이여야 합니다!)**'
+        else:
+            pass
+
         data = discord.Embed(
             description=created_at,
             colour=discord.Colour(value=colour))
-        data.add_field(name="서버 나라", value=str(server.region))
-        data.add_field(name="유저 수", value="{}".format(online))
+        data.add_field(name="서버 위치", value=server.region)
+        data.add_field(name="유저 수", value="{}명".format(len(server.members)))
         data.add_field(name="채팅 채널 수", value=text_channels)
         data.add_field(name="음성 채널 수", value=voice_channels)
         data.add_field(name="역할", value=len(server.roles))
+        data.add_field(name='보안 단계', value=game)
         data.add_field(name="주인", value=str(server.owner))
         data.set_footer(text="서버 ID: " + server.id)
 
@@ -253,8 +312,36 @@ class General:
         try:
             await self.bot.say(embed=data)
         except discord.HTTPException:
-            await self.bot.say("`Embed links` 권한이 있어야 서버 정보를"
+            await self.bot.say("`Embed links`권한이 있어야 서버 정보를"
                                "보낼 수 있어요")
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def channelinfo(self, ctx, channel: discord.Channel=None):
+        """채팅방 정보를 불러오는 명령어입니다!"""
+        user = ctx.message.author
+        if not channel:
+            channel = ctx.message.channel
+        else:
+            pass
+        channeltype = channel.type
+        channeltopic = channel.topic
+        passed = (ctx.message.timestamp - channel.created_at).days
+        created_at = ("채널 개설일: {} ({}일 전)"
+                      "".format(channel.created_at.strftime("%Y-%m-%d %H:%M"),
+                                passed))
+        if channeltype is 'text':
+            channeltype = '글 채널'
+        else:
+            channeltype = '음성 채널'
+        em = discord.Embed(title='Channelinfo',colour=user.colour)
+        em.add_field(name='채널 멘션', value=channel.mention)
+        em.add_field(name='채널 ID', value=channel.id)
+        em.add_field(name='채널 주제', value=channeltopic)
+        em.add_field(name='채널 종류', value=channeltype)
+        em.add_field(name='채널 생성 날짜', value=created_at)
+        await self.bot.say(embed=em)
+            
+
     @commands.command()
     async def urban(self, *, search_terms : str, definition_number : int=1):
         """Urban Dictionary search

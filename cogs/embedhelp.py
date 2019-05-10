@@ -124,20 +124,16 @@ class Help:
 
 
             if toggle == "dm":
-
                 await self.bot.say("{}님! 제가 당신 DM에게 "
                                    "도움말을 보냈어요!".format(author.mention))
                 for em in to_send:
                     await self.bot.send_message(ctx.message.author,
                                                 embed=em)
-                await self.bot.send_message(ctx.message.author,
-                                        "개발자 : Twentysix26 "
-                                        "한글화 및 embed화 : chaemoong")
+                await self.bot.send_message(ctx.message.author, "레드 디스코드 봇 \n제작 Twentysix26(cog_creator) 한글화 및 embed화 : 채뭉")
             elif toggle == 'no_dm':
                 for em in to_send:
                     await self.bot.say(embed=em)
-                await self.bot.say("개발자 : Twentysix26 "
-                                   "한글화 및 embed화 : chaemoong")
+                await self.bot.say("레드 디스코드 봇 \n제작 Twentysix26(cog_creator) 한글화 및 embed화 : 채뭉")
 
         else:
             msg = "**명령어 도움:**"
@@ -162,11 +158,11 @@ class Help:
                 await self.bot.say(embed=em)
             except Exception as e:
                 print(e)
-                embed = discord.Embed(
-                    title='명령어를 찾을 수 없음!'
-                )
-                embed.add_field(name='{} 명령어를 찾을 수 없습니다!'.format(ctx.command.qualified_name), value='다시 한번 확인하신 후 사용해주시기 바랍니다!')
-                await self.bot.say(embed=embed)
+                em=discord.Embed(color=discord.Colour.red())
+                em.add_field(name='잠시만요!',
+                             value='명령어가 존재 하지 않아요! 오타가 있으신지 확인 해보세요!',
+                             inline=False)
+                await self.bot.say(embed=em)
 
 def check_folder():
     if not os.path.exists("data/help"):

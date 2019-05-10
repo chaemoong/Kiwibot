@@ -15,10 +15,11 @@ class shortenurl:
 
 
     @commands.command(pass_context=True)
-    async def shorten(self, url):
+    async def shorten(self, ctx, url:str=None):
         """네이버 API키를 통하여 긴 주소를 짧은 주소로 변형 시켜주는 명령어 입니다!"""
-        client_id = "" # 개발자센터에서 발급받은 Client ID 값
-        client_secret = "" # 개발자센터에서 발급받은 Client Secret 값
+        user=ctx.message.author
+        client_id = "vrB8qDDixeTRXJ1yZ623" # 개발자센터에서 발급받은 Client ID 값
+        client_secret = "0KW93dNKvW" # 개발자센터에서 발급받은 Client Secret 값
         m = url
         encText = urllib.parse.quote(m)
         data = "url=" + encText
@@ -28,13 +29,23 @@ class shortenurl:
         request.add_header("X-Naver-Client-Secret",client_secret)
         response = urllib.request.urlopen(request, data=data.encode("utf-8"))
         rescode = response.getcode()
-        if(rescode==200):
-            response_body = response.read()
-            response_body.decode('utf-8').replace(' 'and':'and',', '')
-            b=response_body.decode('utf-8').split('"')
-            await self.bot.say(b[13])
-        else:
-            print("Error Code:" + rescode)
+        try:
+            if(rescode==200):
+                response_body = response.read()
+                response_body.decode('utf-8').replace(' 'and':'and',', '')
+                b=response_body.decode('utf-8').split('"')
+                em=discord.Embed(colour=discord.Colour.green())
+                em.add_field(name='변경 전 주소', value=url)
+                em.add_field(name='변경 후 주소', value=b[13])
+                if user.avatar_url:
+                    em.set_thumbnail(url=user.avatar_url)
+                else:
+                    pass
+                await self.bot.say(embed=em)
+            else:
+                print("Error Code:" + rescode)
+        except TypeError:
+            await self.bot.say('주소가 입력하지 않았습니다! 다시 입력해주세요!')
 
 
 def check_folder():

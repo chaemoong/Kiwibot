@@ -75,7 +75,6 @@ class TempCache:
     def __init__(self, bot):
         self.bot = bot
         self._cache = []
-        self.ban = ["사이다 한 병 어떠세요?", "정의의 사도 키위봇이 당신을 걷어차리", "저런"]
 
     def add(self, user, server, action, seconds=1):
         tmp = (user.id, server.id, action)
@@ -108,7 +107,8 @@ class Mod:
         self.temp_cache = TempCache(bot)
         perms_cache = dataIO.load_json("data/mod/perms_cache.json")
         self._perms_cache = defaultdict(dict, perms_cache)
-
+        self.ban = ["사이다 한 병 어떠세요?", "정의의 사도 키위봇이 당신을 걷어차리", "저런"]
+        
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def modset(self, ctx):
@@ -302,8 +302,8 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
-    async def kick(self, ctx, user: discord.Member, *, reason: str = None):
-        """Kicks user."""
+    async def kick(self, ctx, user: discord.Member, *, 사유: str = None):
+        """유저를 강퇴하는 명령어입니다!"""
         author = ctx.message.author
         server = author.server
 
@@ -335,10 +335,7 @@ class Mod:
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
     async def ban(self, ctx, user: discord.Member, days: str = None, *, reason: str = None):
-        """Bans user and deletes last X days worth of messages.
-
-        If days is not a number, it's treated as the first word of the reason.
-        Minimum 0 days, maximum 7. Defaults to 0."""
+        """유저를 벤시키는 명령어입니다! 벤할 기간을 정할 수 있어요!"""
         author = ctx.message.author
         server = author.server
 
@@ -348,7 +345,7 @@ class Mod:
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
             await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
+                               "not higher than the user: in the role "
                                "hierarchy.")
             return
 
@@ -365,10 +362,12 @@ class Mod:
             days = 0
 
         if days < 0 or days > 7:
-            await self.bot.say("Invalid days. Must be between 0 and 7.")
+            await self.bot.say("잘못된 기간입니다! 1일에서 7일 사이로 골라주세요!")
             return
 
         try:
+            em = discord.Embed(colour=discord.Colour.orange())
+            em.add_field(name='성공', value=choice(self.ban))
             self.temp_cache.add(user, server, "BAN")
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
@@ -378,10 +377,9 @@ class Mod:
                                 mod=author,
                                 user=user,
                                 reason=reason)
-            await self.bot.send_message(user, '당신은 {} 서버에서 벤을 당하셨습니다!'.format(ctx.message.author))
-            await self.bot.say("완료되었습니다. 정의의 사도 키위봇이 당신을 걷어차리")
+            await self.bot.say(embed=em)
         except discord.errors.Forbidden:
-            await self.bot.say("저의 권한이 없어 그 작업을 수행 할 수 없어요! 권한을 확인해 주세요!")
+            await self.bot.say("저의 권한이 없어 그 작업을 수행 할 수 없어요! 관리자 권한을 추가해주세요!")
         except Exception as e:
             print(e)
 
@@ -412,8 +410,7 @@ class Mod:
         try:
             await self.bot.http.ban(user_id, server.id, 0)
         except discord.NotFound:
-            await self.bot.say("유저를 찾을 수 없습니다! 아마도 나간것 같은데"
-                               "ID를 수집하여 벤 해주실래요?")
+            await self.bot.say("유저를 찾을 수 없습니다! 잘못된 ID인듯 합니다")
         except discord.Forbidden:
             await self.bot.say("I lack the permissions to do this.")
         else:
@@ -483,7 +480,7 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(self, ctx, user : discord.Member, *, nickname=""):
+    async def rename(self, ctx, user: discord.Member, *, nickname=""):
         """Changes user's nickname
 
         Leaving the nickname empty will remove it."""
@@ -499,7 +496,7 @@ class Mod:
 
     @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
-    async def mute(self, ctx, user : discord.Member, *, reason: str = None):
+    async def mute(self, ctx, user : discord.Member, *, 사유: str = None):
         """Mutes user in the channel/server
 
         Defaults to channel"""
@@ -508,7 +505,7 @@ class Mod:
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="channel", pass_context=True, no_pm=True)
-    async def channel_mute(self, ctx, user : discord.Member, *, reason: str = None):
+    async def channel_mute(self, ctx, user : discord.Member, *, 사유: str = None):
         """Mutes user in the current channel"""
         author = ctx.message.author
         channel = ctx.message.channel
@@ -545,7 +542,7 @@ class Mod:
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="server", pass_context=True, no_pm=True)
-    async def server_mute(self, ctx, user : discord.Member, *, reason: str = None):
+    async def server_mute(self, ctx, user : discord.Member, *, 사유: str = None):
         """유저를 서버에서 뮤트 시킵니다"""
         author = ctx.message.author
         server = ctx.message.server
@@ -1466,8 +1463,8 @@ class Mod:
         if case["reason"] is None:
             tmp["reason"] = "k!reason %i <사유>를 통하여 사유를 추가하십시오." % tmp["case"]
         if case["moderator"] is None:
-            tmp["moderator"] = "채뭉봇으로 처벌한 것이 아니기 때문에 수동으로 추가하셔야 합니다."
-            tmp["moderator_id"] = "id is 읎어요"
+            tmp["moderator"] = "키위봇으로 처벌한 것이 아니기 때문에 수동으로 추가하셔야 합니다."
+            tmp["moderator_id"] = "아이디가 없습니다!"
         if case["action"] in ACTIONS_REPR:
             tmp["action"] = ' '.join(ACTIONS_REPR[tmp["action"]])
 

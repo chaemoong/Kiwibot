@@ -246,38 +246,7 @@ class General:
         yee = self.data[region]
 
         game = "{}".format(server.verification_level)
-
-        if region is 'japan':
-            region = ':flag_jp: 일본'
-        elif region is 'brazil':
-            region = ':flag_br: 브라질'
-        elif region is 'eu-central':
-            region = ':flag_eu: 유럽 중앙부'
-        elif region is 'hongkong':
-            region = ':flag_hk: 홍콩'
-        elif region is 'india':
-            region = ':flag_in: 인도'
-        elif region is 'eu-west':
-            region = ':flag_eu: 유럽 동부'
-        elif region is 'us-west':
-            region = ':flag_us: 미국 동부'
-        elif region is 'us-south':
-            region = ':flag_us: 미국 남부'
-        elif region is 'us-east':
-            region = ':flag_us: 미국 서부'
-        elif region is 'us-central':
-            region = ':flag_us: 미국 중앙부'
-        elif region is 'russia':
-            region = ':flag_ru: 러시아'
-        elif region is 'singapore':
-            region = ':flag_sg: 싱가포르'
-        elif region is 'sydney':
-            region = ':flag_au: 시드니'
-        elif region is 'southafrica':
-            region = ':flag_ss: 남 아프리카'
-        else:
-            pass
-
+      
         if game is 'none':
             game = '없음\n**(아무 제한도 없어요!)**'
         elif game is 'low':
@@ -294,7 +263,7 @@ class General:
         data = discord.Embed(
             description=created_at,
             colour=discord.Colour(value=colour))
-        data.add_field(name="서버 위치", value=server.region)
+        data.add_field(name="서버 위치", value=yee)
         data.add_field(name="유저 수", value="{}명".format(len(server.members)))
         data.add_field(name="채팅 채널 수", value=text_channels)
         data.add_field(name="음성 채널 수", value=voice_channels)

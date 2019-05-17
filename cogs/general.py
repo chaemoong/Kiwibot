@@ -1,13 +1,22 @@
 import discord
+from urllib.request import Request
+import openpyxl
+import re
+import requests
+from urllib.request import urlopen, Request
+import urllib
+import bs4
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
 from .utils.chat_formatting import escape_mass_mentions, italics, pagify
 from random import randint
 from random import choice
 from enum import Enum
+from bs4 import BeautifulSoup
 from urllib.parse import quote_plus
 from datetime import timezone
 from pytz import timezone
+from selenium import webdriver
 import datetime
 import time
 import aiohttp
@@ -222,6 +231,24 @@ class General:
         except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
+    
+    @commands.command(pass_context=True, no_pm=True)
+    async def 날씨(self, ctx, 지역):
+        embed = discord.Embed(title='잠시만요', description='날씨 정보를 불러오고 있어요!', color=0x00ff00)
+        meg = await self.bot.say(embed=embed)
+        learn = 지역
+        location = learn
+        enc_location = urllib.parse.quote(location +'날씨')
+        hdr = {'User-Agent': 'Mozilla/5.0'}
+        url = 'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=1&ie=utf8&query=' + enc_location
+        req = Request(url, headers=hdr)
+        html = urllib.request.urlopen(req)
+        bs_obj = bs4.BeautifulSoup(html, "html.parser")
+        div = bs_obj.find("span",{"class":'todaytemp'})
+        div2 = bs_obj.find("p",{"class":"cast_txt"})
+        num = bs_obj.find("span",{"class":"num"})
+        embed = discord.Embed(title=location +' 날씨', description=div.text+' ℃'+'\n'+div2.text+'\n'+num.text, color=0x00ff00)
+        await self.bot.edit_message(meg, embed=embed)
 
     @commands.command(pass_context=True, no_pm=True)
     async def serverinfo(self, ctx):
@@ -239,7 +266,6 @@ class General:
         created_at = ("서버 개설일: {} ({}일 전)"
                       "".format(server.created_at.strftime("%Y-%m-%d %H:%M"),
                                 passed))
-
         colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
         colour = int(colour, 16)
 

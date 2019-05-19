@@ -800,20 +800,20 @@ class Owner:
         owner = discord.utils.get(self.bot.get_all_members(),
                                   id=self.bot.settings.owner)
         author = ctx.message.author
-        footer = "User ID: " + author.id
+        footer = "ID: " + author.id
 
         if ctx.message.server is None:
             source = "through DM"
         else:
-            source = "from {}".format(server)
-            footer += " | Server ID: " + server.id
+            source = "{} 서버에서 보낸 메시지 입니다!".format(server)
+            footer += " | 서버 ID: " + server.id
 
         if isinstance(author, discord.Member):
             colour = author.colour
         else:
             colour = discord.Colour.red()
 
-        description = "Sent by {} {}".format(author, source)
+        description = "{} 님이 보내신 메세지 이며 {}".format(author, source)
 
         e = discord.Embed(colour=colour, description=message)
         if author.avatar_url:
@@ -821,9 +821,20 @@ class Owner:
         else:
             e.set_author(name=description)
         e.set_footer(text=footer)
-
         try:
-            await self.bot.send_message(owner, embed=e)
+            await self.bot.say("{}, 당신이 보내실 메시지는 [{}]입니다\n전송하시려면 `전송`을 챗에 써주시고 보내지 않으시려면 `취소하겠습니다`/`취소` 메시지를 보내시오.".format(author.mention, message))
+
+            msg = await self.bot.wait_for_message(author=author, timeout=15)
+
+            if msg is None:
+                await self.bot.say("문의를 보내지 않겠습니다!")                
+            elif msg.content.lower().strip() in ("취소", "취소하겠습니다"):
+                await self.bot.say("문의를 보내지 않겠습니다!")                
+            elif msg.content.lower().strip() in ("전송"):
+                await self.bot.say('전송이 완료되었습니다!')
+                await self.bot.send_message(owner, embed=e)
+            else:
+                await self.bot.say("문의를 보내지 않겠습니다!")                
         except discord.InvalidArgument:
             await self.bot.say("I cannot send your message, I'm unable to find"
                                " my owner... *sigh*")
@@ -831,8 +842,6 @@ class Owner:
             await self.bot.say("Your message is too long.")
         except:
             await self.bot.say("I'm unable to deliver your message. Sorry.")
-        else:
-            await self.bot.say("Your message has been sent.")
 
     @commands.command()
     async def about(self):

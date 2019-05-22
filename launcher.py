@@ -148,22 +148,23 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
     if data:
         try:
             shutil.rmtree("data", onerror=remove_readonly)
-            print("'data' folder has been wiped.")
+            print("'data' 폴더를 깔끔하게 밀어버렸습니다!")
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occurred when trying to remove the 'data' folder: "
+            print("'data' 폴더를 미는데 오류가 발생하였습니다! 오류코드: "
                   "{}".format(e))
 
     if cogs:
         try:
             shutil.rmtree("cogs", onerror=remove_readonly)
-            print("'cogs' folder has been wiped.")
+            print("'cogs'폴더를 깔끔하게 밀어버렸습니다!")
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occurred when trying to remove the 'cogs' folder: "
+            print("'cog' 폴더를 미는데 오류가 발생하였습니다! 오류코드: "
                   "{}".format(e))
+
 
     if git_reset:
         code = subprocess.call(("git", "reset", "--hard"))

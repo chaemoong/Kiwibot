@@ -107,8 +107,32 @@ class Mod:
         self.temp_cache = TempCache(bot)
         perms_cache = dataIO.load_json("data/mod/perms_cache.json")
         self._perms_cache = defaultdict(dict, perms_cache)
+        self.notice = dataIO.load_json('data/notice/channel.json')
         self.ban = ["사이다 한 병 어떠세요?", "정의의 사도 키위봇이 당신을 걷어차리", "저런"]
-        
+
+    @commands.command(pass_context=True)
+    @checks.is_owner()
+    async def 공지(self, ctx, message=None):
+        owner = ctx.message.author
+        author = owner
+        authorserver=ctx.message.author.server
+        channels_to_send = self.notice['channel']
+        for channels_to_send in channels_to_send:
+            channel = self.bot.get_channel(channels_to_send)
+            em = discord.Embed(colour=0x80ff80)
+            em.set_thumbnail(url=self.bot.user.avatar_url)
+            em.add_field(name='키위봇 공지', value=message)
+            em.set_footer(text='공지 작성자: **' + message.author.name + ' - 인증됨**',icon_url=message.author.avatar_url)
+            await self.bot.send_message(channel, embed=em)
+    @commands.command(pass_context=True)
+    @checks.serverowner_or_permissions(administrator=True)
+    async def 공지설정(self, ctx, channel:discord.Channel):
+        server = ctx.message.server
+        self.notice['channel'].append(channel.id)
+        dataIO.save_json('data/notice/channel.json', self.notice)
+        await self.bot.say('공지 채널을 {}으로 설정되었습니다!'.format(channel.mention))
+
+
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def modset(self, ctx):
@@ -1697,7 +1721,7 @@ def strfdelta(delta):
 
 
 def check_folders():
-    folders = ("data", "data/mod/")
+    folders = ("data", "data/mod/", "data/notice/")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
@@ -1705,6 +1729,12 @@ def check_folders():
 
 
 def check_files():
+    data = {}
+    f = "data/notice/channel.json"
+    if not dataIO.is_valid_json(f):
+        print("channel.json 파일생성을 완료하였습니다!")
+        dataIO.save_json(f,
+                         data)
     ignore_list = {"SERVERS": [], "CHANNELS": []}
 
     files = {

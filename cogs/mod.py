@@ -122,7 +122,7 @@ class Mod:
             em = discord.Embed(colour=0x80ff80)
             em.set_thumbnail(url=self.bot.user.avatar_url)
             em.add_field(name='키위봇 공지', value=message)
-            em.set_footer(text='공지 작성자: **' + message.author.name + ' - 인증됨**',icon_url=message.author.avatar_url)
+            em.set_footer(text='공지 작성자: ' + message.author.name + ' - 인증됨',icon_url=message.author.avatar_url)
             await self.bot.send_message(channel, embed=em)
     @commands.command(pass_context=True)
     @checks.serverowner_or_permissions(administrator=True)

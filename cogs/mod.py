@@ -118,7 +118,6 @@ class Mod:
         authorserver=ctx.message.author.server
         channels_to_send = self.notice['channel']
         for channels_to_send in channels_to_send:
-<<<<<<< HEAD
             if message is None:
                 pass
             else:
@@ -126,12 +125,9 @@ class Mod:
                 em = discord.Embed(colour=0x80ff80)
                 em.set_thumbnail(url=self.bot.user.avatar_url)
                 em.add_field(name='키위봇 공지', value=message)
-                em.set_footer(text='공지 작성자: ' + owner.name + ' - 인증됨',icon_url=owner.avatar_url)
+                em.set_footer(text='공지 작성자: ' + author.name + ' - 인증됨',icon_url=owner.avatar_url)
                 await self.bot.send_message(channel, embed=em)
             
-=======
-
->>>>>>> 73bebabb8a1c7a0098b4db204c8b72093997b0a9
     @commands.command(pass_context=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def 공지설정(self, ctx, channel:discord.Channel):

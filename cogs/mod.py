@@ -112,18 +112,22 @@ class Mod:
 
     @commands.command(pass_context=True)
     @checks.is_owner()
-    async def 공지(self, ctx, message=None):
+    async def 공지(self, ctx, *, message: str = None):
         owner = ctx.message.author
         author = owner
         authorserver=ctx.message.author.server
         channels_to_send = self.notice['channel']
         for channels_to_send in channels_to_send:
-            channel = self.bot.get_channel(channels_to_send)
-            em = discord.Embed(colour=0x80ff80)
-            em.set_thumbnail(url=self.bot.user.avatar_url)
-            em.add_field(name='키위봇 공지', value=message)
-            em.set_footer(text='공지 작성자: **' + message.author.name + ' - 인증됨**',icon_url=message.author.avatar_url)
-            await self.bot.send_message(channel, embed=em)
+            if message is None:
+                pass
+            else:
+                channel = self.bot.get_channel(channels_to_send)
+                em = discord.Embed(colour=0x80ff80)
+                em.set_thumbnail(url=self.bot.user.avatar_url)
+                em.add_field(name='키위봇 공지', value=message)
+                em.set_footer(text='공지 작성자: ' + owner.name + ' - 인증됨',icon_url=owner.avatar_url)
+                await self.bot.send_message(channel, embed=em)
+            
     @commands.command(pass_context=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def 공지설정(self, ctx, channel:discord.Channel):
@@ -326,7 +330,7 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
-    async def kick(self, ctx, user: discord.Member, *, 사유: str = None):
+    async def kick(self, ctx, user: discord.Member, *, reason: str = None):
         """유저를 강퇴하는 명령어입니다!"""
         author = ctx.message.author
         server = author.server

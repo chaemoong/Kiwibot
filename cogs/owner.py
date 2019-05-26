@@ -10,7 +10,7 @@ from .utils.chat_formatting import pagify
 from subprocess import Popen
 from discord.ext import commands
 
-
+import inspect
 import importlib
 import traceback
 import logging
@@ -201,71 +201,27 @@ class Owner:
         em.set_footer(text='도리닭 님의 규칙을 사용하였음을 알려드립니다!')
         await self.bot.say(embed=em)
 
-    @commands.command(pass_context=True, hidden=True)
+    @commands.command(pass_context=True)
     @checks.is_owner()
     async def cmd(self, ctx, *, code=None):
-        """코드 쑤셔 박기(?)"""
-        def check(m):
-            if m.content.strip().lower() == "more":
-                return True
-
-        author = ctx.message.author
-        channel = ctx.message.channel
-
-        code = code.strip('` ')
         result = None
 
-        global_vars = globals().copy()
-        global_vars['bot'] = self.bot
-        global_vars['ctx'] = ctx
-        global_vars['message'] = ctx.message
-        global_vars['author'] = ctx.message.author
-        global_vars['channel'] = ctx.message.channel
-        global_vars['server'] = ctx.message.server
-
         try:
-            result = eval(code, global_vars, locals())
+            python = '```py\n{}\n```'
+            res = eval(code)
+            if inspect.isawaitable(res):
+                result = await res
+            else:
+                result = res
         except Exception as e:
-            await self.bot.say(box('{}: {}'.format(type(e).__name__, str(e)),
-                                   lang="py"))
-            return
+            embed = discord.Embed(colour=0xef6767, timestamp=datetime.datetime.utcnow())
+            embed.add_field(name='Error', value=python.format(type(e).__name__ + ': ' + str(e)))
+            return await self.bot.say(embed=embed)
+        
+        embed = discord.Embed(colour=0x6bffc8, timestamp=datetime.datetime.utcnow())
+        embed.add_field(name='Success', value=python.format(result))
+        await self.bot.say(embed=embed)
 
-        if asyncio.iscoroutine(result):
-            result = await result
-
-        result = str(result)
-
-        if not ctx.message.channel.is_private:
-            censor = (self.bot.settings.email,
-                      self.bot.settings.password,
-                      self.bot.settings.token)
-            r = "[EXPUNGED]"
-            for w in censor:
-                if w is None or w == "":
-                    continue
-                result = result.replace(w, r)
-                result = result.replace(w.lower(), r)
-                result = result.replace(w.upper(), r)
-
-        result = list(pagify(result, shorten_by=16))
-
-        for i, page in enumerate(result):
-            if i != 0 and i % 4 == 0:
-                last = await self.bot.say("There are still {} messages. "
-                                          "Type `more` to continue."
-                                          "".format(len(result) - (i+1)))
-                msg = await self.bot.wait_for_message(author=author,
-                                                      channel=channel,
-                                                      check=check,
-                                                      timeout=10)
-                if msg is None:
-                    try:
-                        await self.bot.delete_message(last)
-                    except:
-                        pass
-                    finally:
-                        break
-            await self.bot.say(box(page, lang="py"))
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):

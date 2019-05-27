@@ -8,12 +8,17 @@ import traceback
 import datetime
 import subprocess
 import choice
+import calendar
+import time
 
 try:
     from discord.ext import commands
     import discord
 except ImportError:
-    print("Discord.py이 설치 되어있지 않습니다! 곧 설치를 시작합니다!")
+    print("Discord.py is not installed.\n"
+          "Consult the guide for your operating system "
+          "and do ALL the steps in order.\n"
+          "https://twentysix26.github.io/Red-Docs/\n")
     os.system('pip install discord')
     try:
         from discord.ext import commands
@@ -57,7 +62,7 @@ class Bot(commands.Bot):
             return bot.settings.get_prefixes(message.server)
 
         self.counter = Counter()
-        self.uptime = datetime.datetime.utcnow()  # Refreshed before login
+        self.uptime = datetime.datetime.now()  # Refreshed before login
         self._message_modifiers = []
         self.settings = Settings()
         self._intro_displayed = False
@@ -65,8 +70,6 @@ class Bot(commands.Bot):
         self.logger = set_logger(self)
         self._last_exception = None
         self.oauth_url = ""
-        self.data = "data/customcom/commands.json"
-        self.riceCog = dataIO.load_json(self.data)
         if 'self_bot' in kwargs:
             self.settings.self_bot = kwargs['self_bot']
         else:
@@ -313,32 +316,33 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         print("레드 - 디스코드 봇")
         print("-----------------")
         print(str(bot.user))
-        print("\n연결된 정보:")
+        print("\n연결된 정보들:")
         print("{} 서버".format(servers))
         print("{} 채널".format(channels))
         print("{} 유저\n".format(users))
-        prefix_label = 'Prefix'
+        prefix_label = '접두사'
         if len(bot.settings.prefixes) > 1:
             prefix_label += 'es'
         print("{}: {}".format(prefix_label, " ".join(bot.settings.prefixes)))
         print("주인: " + str(owner))
-        print("{}/{} cog가 활성화 되었고 {} 개의 명령어가 있습니다!".format(
+        print("{}개 중에 {}개의 cog가 {} 개의 커맨드와 함께 작동됩니다!".format(
             len(bot.cogs), total_cogs, len(bot.commands)))
         print("-----------------")
 
         if bot.settings.token and not bot.settings.self_bot:
-            print("\n이 주소로 이 봇을 데려갈 수 있습니다!:")
+            print("\nUse this url to bring your bot to a server:")
             url = await get_oauth_url()
             bot.oauth_url = url
             print(url)
 
-        print("\n공식 서버: https://discord.gg/red")
+        print("\nOfficial server: https://discord.gg/red")
 
         print("Make sure to keep your bot updated. Select the 'Update' "
               "option from the launcher.")
 
         await bot.get_cog('Owner').disable_commands()
 
+            
     @bot.event
     async def on_resumed():
         bot.counter["session_resumed"] += 1
@@ -359,6 +363,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         
     @bot.event
     async def on_command_error(error, ctx):
+        server = ctx.message.server
         channel = ctx.message.channel
         if isinstance(error, commands.MissingRequiredArgument):
             await bot.send_cmd_help(ctx)
@@ -366,12 +371,11 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             await bot.send_cmd_help(ctx)
         elif isinstance(error, commands.DisabledCommand):
             message = discord.Embed(
-                title='비활성화 명령어 사용감지!',
-                colour=ctx.message.author.colour
+                title='비활성화 명령어 사용감지!'
             )
-            message.add_field(name='그 명령어는 비활성화 된 명령어 입니다!', value='이 명령어는 어떠한 사연으로 비활성화 되었습니다!\n다른 명령어를 사용해주시기 바랍니다.')
+            message.add_field(name='그 명령어는 비활성화 된 명령어 입니다!')
             message.set_footer(text='문의는 k!contact [할말] 으로 문의 바랍니다!')
-            await bot.send_message(channel, embed=message)
+            await bot.send_message(channel, "이 명령어는 비활성화 되었습니다!")
         elif isinstance(error, commands.CommandInvokeError):
             # A bit hacky, couldn't find a better way
             no_dms = "Cannot send messages to this user"
@@ -385,9 +389,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
 
             bot.logger.exception("Exception in command '{}'".format(
                 ctx.command.qualified_name), exc_info=error.original)
-            message = discord.Embed(
-                title='에러 발생!'
-            )
+            message = discord.Embed(title='에러발생!', colour=discord.Colour.red())
             message.add_field(name='에러 발생한 명령어', value=ctx.command.qualified_name)
             message.set_footer(text='에러가 지속적으로 발생할시 chaemoong#8612으로 문의 바랍니다!')
             log = ("Exception in command '{}'\n"
@@ -397,20 +399,28 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             bot._last_exception = log
             await ctx.bot.send_message(channel, embed=message)
         elif isinstance(error, commands.CommandNotFound):
-            pass
+            cc = dataIO.load_json("data/customcom/commands.json")
+            cgc = dataIO.load_json("data/customgcom/commands.json")
+            content = ctx.message.content[2:]
+            try:
+                cgc["COMMANDS"][content]
+            except KeyError:
+                try:
+                    cc[server.id][content]
+                except KeyError:
+                    message = discord.Embed(colour=discord.Colour.red())
+                    message.add_field(name='없는 명령어 사용 감지!', value='아래의 명령어는 없는 명령어 입니다!')
+                    message.set_footer(text='제대로 작성하였는지 확인해주시고 사용해주세요!')
+                    await bot.send_message(channel, embed=message)
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.NoPrivateMessage):
-            message = discord.Embed(
-                title='그만!'
-            )
+            message = discord.Embed(title='그만!', colour=discord.Colour.red())
             message.add_field(name='이 명령어는 DM(PM)에서 사용하실수 없습니다!', value='DM(PM)이 아닌 서버에서 사용해주시기 바랍니다!!')
             message.set_footer(text='문의는 k!contact [할말] 으로 문의 바랍니다!')
             await bot.send_message(channel, embed=message)
         elif isinstance(error, commands.CommandOnCooldown):
-            message = discord.Embed(
-                title='그만!'
-            )
+            message = discord.Embed(title='그만!', colour=discord.Colour.red())
             message.add_field(name='이 명령어는 쿨타임이 걸려있습니다!', value='{:.2f}초 뒤에 다시 시도해주시기 바랍니다!'.format(error.retry_after))
             message.set_footer(text='문의는 k!contact [할말] 으로 문의 바랍니다!')
             await bot.send_message(channel, embed=message)
@@ -464,8 +474,12 @@ def interactive_setup(settings):
                   "\nType yes to confirm or no to change it".format(
                       new_prefix))
             confirmation = get_answer()
-        settings.prefixes = [new_prefix]
-        settings.save_settings()
+            if new_prefix > 2:
+                print("코드 특성상 접두사를 2자 이상으로 할 수 없습니다!")
+                new_prefix = ensure_reply("\nPrefix> ").strip()
+            else:
+                settings.prefixes = [new_prefix]
+                settings.save_settings()
 
     if first_run:
         print("\nInput the admin role's name. Anyone with this role in Discord"

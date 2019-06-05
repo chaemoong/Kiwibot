@@ -29,6 +29,11 @@ class CustomCommands:
 
         예:
         k!cc add <명령어> <원하는 멘트>
+
+        Add the Custom Command
+
+        Example:
+        k!cc add <command> <text>
         """
         server = ctx.message.server
         command = command.lower()

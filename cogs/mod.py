@@ -124,7 +124,7 @@ class Mod:
                 channel = self.bot.get_channel(channels_to_send)
                 em = discord.Embed(colour=0x80ff80)
                 em.set_thumbnail(url=self.bot.user.avatar_url)
-                em.add_field(name='키위봇 공지', value=message)
+                em.add_field(name='키위봇 공지', value=message + '\n[파트너 서버](https://discord.gg/KNBGZU2)')
                 em.set_footer(text='공지 작성자: ' + author.name + ' - 인증됨',icon_url=owner.avatar_url)
                 await self.bot.send_message(channel, embed=em)
             
@@ -132,6 +132,22 @@ class Mod:
     @checks.serverowner_or_permissions(administrator=True)
     async def 공지설정(self, ctx, channel:discord.Channel):
         server = ctx.message.server
+        author = ctx.message.author
+        if self.notice['server'] in server.id:
+            await self.bot.say('이미 공지 채널이 설정되어 있습니다!')
+        else:
+            await self.bot.say("{}, 당신이 설정할 공치 채널은 [{}]입니다\n설정하시려면 `설정`을 챗에 써주시고 설정 하지 않으시려면 `취소하겠습니다`/`취소` 메시지를 보내시오.".format(author.mention, channel.mention))
+
+            msg = await self.bot.wait_for_message(author=author, timeout=15)
+
+            if msg is None:
+                await self.bot.say("**설정이 취소되었습니다!**")                
+            elif msg.content.lower().strip() in ("취소", "취소하겠습니다"):
+                await self.bot.say("**설정이 취소되었습니다!**")                
+            elif msg.content.lower().strip() in ("설정"):
+                await self.bot.say("**설정이 완료 되었습니다!**")                
+            else:
+                await self.bot.say("**설정이 취소되었습니다!**")                
         self.notice['channel'].append(channel.id)
         dataIO.save_json('data/notice/channel.json', self.notice)
         await self.bot.say('공지 채널을 {}으로 설정되었습니다!'.format(channel.mention))
@@ -189,6 +205,30 @@ class Mod:
                 return
             self.settings[server.id]["mod-log"] = None
             await self.bot.say("Mod log deactivated.")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+
+    @modset.command(pass_context=True, no_pm=True)
+    async def language(self, ctx, language=None):
+        """Sets a channel as bot's languages
+
+        Leaving the channel parameter empty will deactivate it"""
+        server = ctx.message.server
+        if language:
+            if language == 'ko_kr':
+                self.settings[server.id]["languages"] = 'ko'
+                await self.bot.say("봇 언어가 한글로 설정되었습니다!")
+            elif language == 'en_us':
+                self.settings[server.id]["languages"] = 'en'
+                await self.bot.say("BOT Language is setting to English!")               
+            else:
+                em=discord.Embed(colour=0xffc0cb)
+                em.add_field(name='Language Settings', value='This command is Language Settings command!\nLanguage Example: ko_kr, en_us\n언어 선택 명령어입니다!\n언어는 ko_kr, en_us 으로 총 2개입니다!')
+                await self.bot.say(embed=em)
+        else:
+            em=discord.Embed(colour=0xffc0cb)
+            em.add_field(name='Language Settings', value='This command is Language Settings command!\nLanguage Example: ko_kr, en_us\n언어 선택 명령어입니다!\n언어는 ko_kr, en_us 으로 총 2개입니다!')
+            await self.bot.say(embed=em)
+
         dataIO.save_json("data/mod/settings.json", self.settings)
 
     @modset.command(pass_context=True, no_pm=True)

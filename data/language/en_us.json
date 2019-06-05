@@ -1,0 +1,23 @@
+{
+    "afk": {
+        "field" : "AFK Status is Starting!",
+        "value" : "{}, Your Afk Status is Starting!\nIf you exit the Afk Status then Sending Any Message!",
+        "footer" : "AFK Status starting time : {}-{}-{} {}:{}:{}",
+        "reason" : "Reason"
+        
+    },
+    "afk_ing":{
+        "reason": "Reason",
+        "reason_None": "None",
+        "author": "{} is AFK Status!"
+    },
+
+    "afk_end": {
+        "field" : "{}'s AFK Status is Finishing!",
+        "value" : "**{}'s afk time is {} and reason is {}**",
+        "footer" : "AFK Finishing time",
+        "reason-none": "None"
+    }    
+
+    
+}

@@ -437,6 +437,22 @@ def check_folders():
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
 
+def remaining(epoch):
+    remaining = epoch - time.time()
+    finish = (remaining < 0)
+    m, s = divmod(remaining, 60)
+    h, m = divmod(m, 60)
+    s = int(s)
+    m = int(m)
+    h = int(h)
+    out = "{:01d}:{:02d}:{:02d}".format(h, m, s)
+    return out, finish
+
+def getEpoch(seconds : int):
+    epoch = time.time()
+    epoch += seconds
+    return epoch
+
 
 def interactive_setup(settings):
     first_run = settings.bot_settings == settings.default_settings

@@ -53,6 +53,17 @@ class General:
         self.poll_sessions = []
         self.data = dataIO.load_json('data/server.region/region.json')
 
+    @commands.command(aliases=["핑", "vld", "ㅔㅑㅜㅎ"], pass_context=True)
+    async def ping(self,ctx):
+        """봇의 핑을 확인합니다!\nCheck Bot's Ping!"""
+        channel = ctx.message.channel
+        t1 = time.perf_counter()
+        await self.bot.send_typing(channel)
+        t2 = time.perf_counter()
+        em = discord.Embed(colour=discord.Colour.purple())
+        em.add_field(name='핑', value='퐁! :ping_pong: 봇의 핑 : {}ms'.format(round((t2-t1)*1000)))
+        await self.bot.say(embed=em)
+
     @commands.command()
     async def choose(self, *choices):
         """Chooses between multiple choices.

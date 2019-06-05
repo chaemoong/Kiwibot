@@ -11,6 +11,10 @@ class Afk:
         self.data = {}
         self.profile = "data/afk/afk.json"
         self.riceCog = dataIO.load_json(self.profile)
+        self.ko = "data/language/ko_kr.json"
+        self.ko_kr = dataIO.load_json(self.ko)
+        self.en = "data/language/en_us.json"
+        self.en_us = dataIO.load_json(self.en)
         
     @commands.command(no_pm=True, pass_context=True)
     async def afk(self, ctx, *, reason=None):
@@ -20,16 +24,21 @@ class Afk:
         author = ctx.message.author
         server = ctx.message.server
         user = author
+        mod = self.bot.get_cog('Mod')
+        try:
+            language = mod.settings[server.id]['languages']
+        except KeyError:
+            language = 'en'
+        if language is 'ko':
+            yee = self.ko_kr['afk']
+        elif language is 'en':
+            yee = self.en_us['afk']
+        else:
+            yee = self.en_us['afk']
         self.data[author.id] = int(time.perf_counter())
         afkstart = discord.Embed(colour=user.colour)
-        afkstart.add_field(name='잠수 시작!', value='{} 님의 잠수가 시작되었습니다!\n잠수 상태를 해제 하고 싶을시 아무 메시지나 작성 하시면 됩니다!'.format(author.name))
-        afkstart.set_footer(text='잠수 시작 시간 {}-{}-{} {}:{}:{}'.format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
-        afkstart_reason = discord.Embed(
-            colour=user.colour        
-            )
-        afkstart_reason.add_field(name='잠수 시작!', value='{} 님의 잠수가 시작되었습니다!\n잠수 상태를 해제 하고 싶을시 아무 메시지나 작성 하시면 됩니다!'.format(author.name))
-        afkstart_reason.add_field(name='사유', value='```\n{}\n```'.format(reason))
-        afkstart_reason.set_footer(text='잠수 시작 시간 {}-{}-{} {}:{}:{}'.format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
+        afkstart.add_field(name=yee['field'], value=yee['value'].format(author.name))
+        afkstart.set_footer(text=yee['footer'].format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
         if not reason:
             self.riceCog[user.id] = {}
             self.riceCog[user.id].update({"reason": None})
@@ -49,11 +58,12 @@ class Afk:
                 pass
         else:
             try:
+                afkstart.add_field(name=yee['reason'], value='```\n{}\n```'.format(reason), inline=False)
                 self.riceCog[user.id] = {}
                 self.riceCog[user.id].update({"reason": reason})
                 dataIO.save_json(self.profile,
                              self.riceCog)
-                await self.bot.say(embed=afkstart_reason)
+                await self.bot.say(embed=afkstart)
             except:
                 pass
 
@@ -62,6 +72,20 @@ class Afk:
         dt = datetime.datetime.now()
         user = author
         tmp = {}
+        mod = self.bot.get_cog('Mod')
+        try:
+            language = mod.settings[author.server.id]['languages']
+        except KeyError:
+            language = 'en'
+        if language is 'ko':
+            yee = self.ko_kr['afk_end']
+            asdf = self.ko_kr['afk_ing']
+        elif language is 'en':
+            yee = self.en_us['afk_end']
+            asdf = self.en_us['afk_ing']
+        else:
+            yee = self.en_us['afk_end']
+            asdf = self.en_us['afk_ing']
         for mention in message.mentions:
             tmp[mention] = True
         if message.author.id != self.bot.user.id:
@@ -71,12 +95,12 @@ class Afk:
                         avatar = author.avatar_url if author.avatar else author.default_avatar_url
                         if self.riceCog[author.id]['reason']:
                             em = discord.Embed(color=author.colour)
-                            em.add_field(name='사유', value=self.riceCog[author.id]['reason'])
-                            em.set_author(name='{}님은 현재 잠수 상태입니다!'.format(author.display_name), icon_url=avatar)
+                            em.add_field(name=asdf['reason'], value=self.riceCog[author.id]['reason'])
+                            em.set_author(name=asdf['author'].format(author.display_name), icon_url=avatar)
                         else:
                             em = discord.Embed(color=author.colour)
-                            em.add_field(name='사유', value='없음')
-                            em.set_author(name='{} 님은 현재 잠수 상태입니다!'.format(author.display_name), icon_url=avatar)
+                            em.add_field(name=asdf['reason'], value=asdf['reason_None'])
+                            em.set_author(name=asdf['author'].format(author.display_name), icon_url=avatar)
                         await self.bot.send_message(message.channel, embed=em)
                     except:
                         await self.bot.send_message(message.channel, '봇 권한 중에서 `링크 첨부` 권한이 빠져있습니다!\n봇 권한을 추가해주세요!')
@@ -87,14 +111,19 @@ class Afk:
                 reason = self.riceCog[user.id]["reason"]
                 if tmp > 0:
                     if reason is None:
-                        reason = '없습니다'
+                        reason = yee['reason-none']
                     else:
-                        reason = reason + ' 입니다'
+                        if language is 'ko':
+                            reason = reason + yee['reason-yes']
+                        elif language is 'en':
+                            reason = reason
+                        else:
+                            reason = reason
                     afkend = discord.Embed(
                         colour=user.colour
                     )                
-                    afkend.add_field(name='{}님의 잠수상태가 종료되었습니다!'.format(author.name), value='**{}님의 잠수 기간은 {} 이며, 사유는 {}**'.format(author.name, tmp1, reason))
-                    afkend.add_field(name='잠수 종료 시간', value='{}-{}-{} {}:{}:{}'.format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second))
+                    afkend.add_field(name=yee['field'].format(author.name), value=yee['value'].format(author.name, tmp1, reason), inline=False)
+                    afkend.add_field(name=yee['footer'], value='{}-{}-{} {}:{}:{}'.format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second), inline=False)
                     await self.bot.send_message(message.channel, embed=afkend)
                     self.data.pop(author.id)
                     del self.riceCog[user.id]

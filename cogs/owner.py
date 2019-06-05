@@ -206,20 +206,30 @@ class Owner:
     async def cmd(self, ctx, *, code=None):
         result = None
 
+        global_vars = globals().copy()
+        global_vars['bot'] = self.bot
+        global_vars['ctx'] = ctx
+        global_vars['message'] = ctx.message
+        global_vars['author'] = ctx.message.author
+        global_vars['channel'] = ctx.message.channel
+        global_vars['server'] = ctx.message.server
+
         try:
             python = '```py\n{}\n```'
-            res = eval(code)
+            res = eval(code, global_vars)
             if inspect.isawaitable(res):
                 result = await res
             else:
                 result = res
         except Exception as e:
-            embed = discord.Embed(colour=0xef6767, timestamp=datetime.datetime.utcnow())
-            embed.add_field(name='Error', value=python.format(type(e).__name__ + ': ' + str(e)))
+            embed = discord.Embed(title='Error', colour=0xef6767, timestamp=datetime.datetime.utcnow())
+            embed.add_field(name=':inbox_tray: **INPUT**', value='```py\n' + str(code) + '\n```', inline=False)
+            embed.add_field(name=':outbox_tray: **OUTPUT**', value=python.format(type(e).__name__ + ': ' + str(e)), inline=False)
             return await self.bot.say(embed=embed)
         
-        embed = discord.Embed(colour=0x6bffc8, timestamp=datetime.datetime.utcnow())
-        embed.add_field(name='Success', value=python.format(result))
+        embed = discord.Embed(title='Success', colour=0x6bffc8, timestamp=datetime.datetime.utcnow())
+        embed.add_field(name=':inbox_tray: **INPUT**', value='```py\n' + str(code) + '\n```', inline=False)
+        embed.add_field(name=':outbox_tray: **OUTPUT**', value=python.format(result), inline=False)
         await self.bot.say(embed=embed)
 
 
@@ -231,7 +241,6 @@ class Owner:
             return
 
     @_set.command(pass_context=True)
-    @checks.is_owner()
     async def owner(self, ctx):
         """주인 설정"""
         if self.bot.settings.no_prompt is True:

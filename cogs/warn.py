@@ -130,7 +130,6 @@ class Warn:
     @checks.admin_or_permissions(ban_members=True, manage_server=True)
     async def ban(self, ctx, *, msg=None):
         """Set the ban message.
-
         To get a full list of information, use **warnset message** without any parameters."""
         if not msg:
             await self.bot.say("```Set the ban message.\n\n"
@@ -168,18 +167,14 @@ class Warn:
     @checks.admin_or_permissions(ban_members=True, manage_server=True)
     async def message(self, ctx, *, msg=None):
         """Set the warning message
-
         user.mention - mentions the user
         user.name   - names the user
         user.id     - gets id of user
         warn.count  - gets the # of this warn
         warn.limit  - # of warns allowed
-
         Example:
-
         **You, user.mention, have received Warning warn.count. After warn.limit,
         you will be baned.**
-
         You can set it either for every server.
         To set the ban message, use *warnset ban*
         """
@@ -241,7 +236,6 @@ class Warn:
     @checks.admin_or_permissions(ban_members=True)
     async def warn(self, ctx, user: discord.Member, *, reason=None):
         """유저에게 경고를 주는 명령어 입니다
-
         경고 10개 이면 벤을 당하게 됩니다!"""
         server = ctx.message.server
         author = ctx.message.author

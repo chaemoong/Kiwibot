@@ -74,8 +74,8 @@ class Afk:
         tmp = {}
         mod = self.bot.get_cog('Mod')
         try:
-            language = mod.settings[author.server.id]['languages']
-        except KeyError:
+            language = mod.settings[user.server.id]['languages']
+        except:
             language = 'en'
         if language is 'ko':
             yee = self.ko_kr['afk_end']

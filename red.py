@@ -490,12 +490,8 @@ def interactive_setup(settings):
                   "\nType yes to confirm or no to change it".format(
                       new_prefix))
             confirmation = get_answer()
-            if new_prefix > 2:
-                print("코드 특성상 접두사를 2자 이상으로 할 수 없습니다!")
-                new_prefix = ensure_reply("\nPrefix> ").strip()
-            else:
-                settings.prefixes = [new_prefix]
-                settings.save_settings()
+            settings.prefixes = [new_prefix]
+            settings.save_settings()
 
     if first_run:
         print("\nInput the admin role's name. Anyone with this role in Discord"
